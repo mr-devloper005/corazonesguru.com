@@ -19,12 +19,12 @@ export const taskPageVoices = {
     chips: ['Editorial pacing', 'Topic filters', 'Long-read friendly'],
   },
   classified: {
-    eyebrow: 'Notice board',
-    headline: 'Fast-moving classifieds, offers, and time-sensitive posts.',
-    description: 'Classified content should feel quick to scan, practical, and action-oriented with less editorial decoration.',
-    filterLabel: 'Filter classified category',
-    secondaryNote: 'Prioritize urgency, short summaries, and direct browsing.',
-    chips: ['Fast scan', 'Offers', 'Action cues'],
+    eyebrow: 'Article notice board',
+    headline: 'Short editorial notices and timely article updates.',
+    description: 'Use this view for quick calls, announcements, contributor notes, and compact editorial posts.',
+    filterLabel: 'Filter article notice',
+    secondaryNote: 'Keep the note brief, clear, and tied to a reading or publishing action.',
+    chips: ['Updates', 'Calls for pitches', 'Editorial notes'],
   },
   sbm: {
     eyebrow: 'Saved resources',

@@ -7,6 +7,7 @@ import { SITE_CONFIG } from '@/lib/site-config'
 import { pagesContent } from '@/editable/content/pages.content'
 import { editableDesignContract as dc, editablePalette as pal } from '@/editable/layouts/design-contract'
 import { getEditablePostImage, postHref } from '@/editable/cards/PostCards'
+import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
 type HomeSectionProps = {
   primaryTask: TaskKey
@@ -129,49 +130,91 @@ function Rail({ children, className = '' }: { children: React.ReactNode; classNa
 
 export function EditableHomeHero({ primaryTask, primaryRoute }: HomeSectionProps) {
   const heroTitle = pagesContent.home.hero.title.join(' ') || `Come for the ${taskLabel(primaryTask).toLowerCase()}. Stay for the connection.`
+  const heroStats = [
+    { value: '500K+', label: 'writers' },
+    { value: '1.2M+', label: 'published stories' },
+    { value: '25', label: 'editorial tools' },
+  ]
+
   return (
-    <section className={`${pal.creamBg} relative overflow-hidden`}>
+    <section className="relative overflow-hidden border-b border-[#3a2319] bg-[linear-gradient(110deg,#1b0f0a_0%,#2c160d_55%,#1b0f0a_100%)] text-[#ffe5cc]">
       <div className="pointer-events-none absolute inset-0 opacity-[0.35]">
-        <div className="absolute -right-[20%] top-[10%] h-[420px] w-[420px] rounded-full bg-[#f4d7c1] blur-3xl" />
-        <div className="absolute -left-[10%] bottom-[5%] h-[320px] w-[320px] rounded-full bg-[#f8e0d0] blur-3xl" />
+        <div className="absolute -right-[18%] top-[10%] h-[420px] w-[420px] rounded-full bg-[#6b3218] blur-3xl" />
+        <div className="absolute -left-[10%] bottom-[5%] h-[320px] w-[320px] rounded-full bg-[#4b220f] blur-3xl" />
       </div>
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:px-8 lg:py-20">
-        <div>
-          <p className={`${dc.type.eyebrow} ${pal.accentText}`}>{pagesContent.home.hero.badge}</p>
-          <h1 className={`${dc.type.heroTitle} mt-4 max-w-xl`}>{heroTitle}</h1>
-          <p className={`mt-5 max-w-lg text-base leading-relaxed ${pal.mutedText} sm:text-lg`}>{pagesContent.home.hero.description}</p>
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8 lg:py-24">
+        <div className="max-w-2xl">
+          <p className={`${dc.type.eyebrow} text-[#f7a566]`}>{pagesContent.home.hero.badge}</p>
+          <h1 className={`${dc.type.heroTitle} mt-4 max-w-3xl text-[#ffd39f]`}>{heroTitle}</h1>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-[#f5d9bf] sm:text-lg">{pagesContent.home.hero.description}</p>
+
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link href={primaryRoute} className={dc.button.primary}>Browse {taskLabel(primaryTask).toLowerCase()} <ArrowRight className="h-4 w-4" /></Link>
-            <Link href="/contact" className={dc.button.secondary}>Contact us</Link>
+            <Link href={pagesContent.home.hero.primaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ea7b38] px-8 py-3.5 text-sm font-semibold text-white transition hover:opacity-90">
+              {pagesContent.home.hero.primaryCta.label}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href={pagesContent.home.hero.secondaryCta.href} className="inline-flex items-center justify-center rounded-full border border-[#7a4a32] px-8 py-3.5 text-sm font-semibold text-[#ffe2c2] transition hover:bg-white/5">
+              {pagesContent.home.hero.secondaryCta.label}
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {heroStats.map((item) => (
+              <div key={item.label} className="rounded-[1.5rem] border border-white/10 bg-white/5 px-4 py-4 text-center backdrop-blur-sm">
+                <p className="text-2xl font-black tracking-[-0.04em] text-white">{item.value}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.26em] text-[#ffdab3]">{item.label}</p>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="relative min-h-[360px] lg:min-h-[430px]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative h-[min(100%,390px)] w-[min(100%,430px)] bg-[var(--slot4-accent-fill)]" style={{ clipPath: 'polygon(8% 12%, 92% 4%, 98% 45%, 88% 88%, 42% 96%, 6% 78%, 2% 38%)' }}>
-              <div className="absolute inset-0 bg-[linear-gradient(145deg,color-mix(in_oklab,var(--slot4-accent-fill)_78%,white)_0%,var(--slot4-accent-fill)_48%,color-mix(in_oklab,var(--slot4-accent-fill)_82%,black)_100%)]" />
-              <div className="absolute inset-6 flex flex-col justify-end rounded-sm bg-white/10 p-4 text-white backdrop-blur-[2px]">
-                <p className="text-xs font-medium uppercase tracking-widest opacity-90">Featured on {SITE_CONFIG.name}</p>
-                <p className="mt-2 text-lg font-bold leading-snug">Stories, resources, and useful pages from the community.</p>
+
+        <div className="relative min-h-[440px]">
+          <div className="pointer-events-none absolute -top-10 right-0 h-36 w-36 rounded-full bg-[#f3c197] opacity-80 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-10 left-0 h-32 w-32 rounded-full bg-[#7c4a2e]/70 blur-3xl" />
+
+          <div className="relative mx-auto h-full max-w-[520px]">
+            <div className="rounded-[2.25rem] border border-white/10 bg-[#fff7ed] p-6 shadow-[0_30px_70px_rgba(0,0,0,0.18)]">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#d6a57a]" />
+                  <span className="text-xs uppercase tracking-[0.28em] text-[#7a4f2e]">Writer desk</span>
+                </div>
+                <div className="flex items-center gap-2 text-[#a0775f]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#ddc3aa]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#ddc3aa]" />
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-[1.8rem] bg-white p-5 shadow-[0_20px_45px_rgba(0,0,0,0.08)]">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.28em] text-[#c07336]">{pagesContent.home.hero.featureCardBadge}</p>
+                <h3 className="mt-3 text-2xl font-black tracking-[-0.04em] text-[#33210d]">{pagesContent.home.hero.featureCardTitle}</h3>
+                <p className="mt-4 text-sm leading-7 text-[#755a48]">{pagesContent.home.hero.featureCardDescription}</p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <button className="rounded-full border border-[#e9d1bb] bg-[#f8ede1] px-4 py-2 text-sm font-semibold text-[#7d5232]">Rewrite headline</button>
+                  <button className="rounded-full border border-[#e9d1bb] bg-[#fff8f1] px-4 py-2 text-sm font-semibold text-[#7d5232]">Title case</button>
+                </div>
+
+                <div className="mt-5 rounded-[1.35rem] bg-[#fff2e6] p-4">
+                  <p className="text-xs uppercase tracking-[0.24em] text-[#b27c49]">Keyword</p>
+                  <p className="mt-1 text-sm font-semibold text-[#4c2f1c]">content strategy</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="absolute left-0 top-[6%] z-10 max-w-[270px] rounded-2xl border border-black/5 bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--slot4-accent-soft)] text-xs font-black text-[var(--slot4-page-text)]">R</div>
-              <div className="min-w-0 flex-1">
-                <p className={`text-xs font-semibold ${pal.accentText}`}>reader_mina</p>
-                <p className="mt-1 text-sm leading-snug text-neutral-800">This page went from useful to unforgettable in two scrolls.</p>
-                <div className="mt-2 flex items-center gap-1 text-xs text-neutral-500"><Heart className={`h-3.5 w-3.5 ${pal.accentText}`} /><span>128</span></div>
+
+            <div className="absolute -right-6 top-12 hidden w-[280px] flex-col gap-3 rounded-[2rem] border border-[#e1c4a8] bg-[#fff8f0] p-4 text-[#4f2e14] shadow-[0_20px_50px_rgba(0,0,0,0.12)] lg:flex">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-[0.28em] text-[#bd8348]">AI suggested</span>
+                <span className="rounded-full bg-[#f2d4b5] px-2 py-1 text-[10px] font-black uppercase tracking-[0.24em]">3 ideas</span>
               </div>
-            </div>
-          </div>
-          <div className="absolute bottom-[8%] right-0 z-10 max-w-[270px] rounded-2xl border border-black/5 bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--slot4-accent-soft)] text-xs font-black text-[var(--slot4-page-text)]">D</div>
-              <div className="min-w-0 flex-1">
-                <p className={`text-xs font-semibold ${pal.accentText}`}>dev_notes</p>
-                <p className="mt-1 text-sm leading-snug text-neutral-800">Clean layout, quick browsing, and no heavy drama.</p>
-                <div className="mt-2 flex items-center gap-1 text-xs text-neutral-500"><Heart className={`h-3.5 w-3.5 ${pal.accentText}`} /><span>204</span></div>
+              <div className="rounded-[1.5rem] bg-white p-3 shadow-sm">
+                <p className="text-sm font-semibold text-[#2f1a0f]">How to make headlines feel more urgent</p>
+              </div>
+              <div className="rounded-[1.5rem] bg-white/90 p-3 shadow-sm">
+                <p className="text-sm font-semibold text-[#2f1a0f]">A short description for better reads</p>
+              </div>
+              <div className="rounded-[1.5rem] bg-white/90 p-3 shadow-sm">
+                <p className="text-sm font-semibold text-[#2f1a0f]">A cleaner editorial flow for stories</p>
               </div>
             </div>
           </div>
@@ -185,12 +228,12 @@ export function EditableStoryRail({ primaryTask, primaryRoute, posts }: HomeSect
   const railPosts = posts.slice(0, 12)
   if (!railPosts.length) return null
   return (
-    <section className={`${pal.warmBg} relative border-t border-black/[0.06]`}>
+    <section className="relative border-y border-[#3a2319] bg-[#2a160d] text-[#ffe3c6]">
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-[linear-gradient(to_bottom,transparent,#ffffff)]" />
       <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between gap-4">
-          <h2 className={dc.type.sectionTitle}>Trending now</h2>
-          <Link href={primaryRoute} className="hidden text-sm font-semibold text-[#006d6d] hover:underline sm:inline">See all</Link>
+          <h2 className={`${dc.type.sectionTitle} text-[#ffd39f]`}>Trending now</h2>
+          <Link href={primaryRoute} className="hidden text-sm font-semibold text-[#f4a76b] hover:underline sm:inline">See all</Link>
         </div>
         <Rail className="mt-8">
           {railPosts.map((post) => <MiniPoster key={post.id} post={post} href={postHref(primaryTask, post, primaryRoute)} />)}
@@ -204,7 +247,7 @@ export function EditableMagazineSplit({ primaryTask, primaryRoute, posts }: Home
   const featured = posts.slice(0, 8)
   if (!featured.length) return null
   return (
-    <section className={`${pal.lavenderBg} relative overflow-hidden`}>
+    <section className="relative overflow-hidden bg-[#f6efe6]">
       <div className="pointer-events-none absolute -left-20 top-8 h-40 w-40 rounded-full bg-white/40 blur-2xl" />
       <div className="pointer-events-none absolute -right-16 bottom-4 h-48 w-48 rounded-full bg-indigo-200/50 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -222,11 +265,11 @@ export function EditableMagazineSplit({ primaryTask, primaryRoute, posts }: Home
 export function EditableTimeCollections({ primaryTask, primaryRoute, posts, timeSections }: HomeSectionProps) {
   const categoryPosts = timeSections.flatMap((section) => section.posts).length ? timeSections.flatMap((section) => section.posts) : posts.slice(8)
   const feature = categoryPosts[0] || posts[0]
-  const picks = categoryPosts.slice(1, 5)
-  const indexPosts = categoryPosts.slice(5, 13)
+  const picks = categoryPosts.slice(1, 7)
+  const indexPosts = categoryPosts.slice(7, 19)
   return (
     <section className={pal.grayBg}>
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:px-8">
         <div>
           <h2 className={dc.type.sectionTitle}>All the topics. All the voices.</h2>
           <p className={`mt-4 max-w-md text-base leading-relaxed ${pal.mutedText}`}>Find your next page faster. Browse clean sections, rich cards, and useful posts without losing the original site rhythm.</p>
@@ -235,12 +278,12 @@ export function EditableTimeCollections({ primaryTask, primaryRoute, posts, time
             <button className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white"><Search className="h-4 w-4" /> Search</button>
           </form>
         </div>
-        <div className="grid gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           {picks.map((post, index) => <WideStoryCard key={post.id} post={post} href={postHref(primaryTask, post, primaryRoute)} index={index} />)}
         </div>
       </div>
       {feature ? (
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)] lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:px-8">
           <Link href={postHref(primaryTask, feature, primaryRoute)} className="group relative min-h-[420px] overflow-hidden rounded-[2rem] bg-black text-white shadow-[0_18px_70px_rgba(0,0,0,0.16)]">
             <img src={getEditablePostImage(feature)} alt={feature.title} className="absolute inset-0 h-full w-full object-cover opacity-65 transition duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.05),rgba(0,0,0,0.74))]" />
@@ -250,7 +293,7 @@ export function EditableTimeCollections({ primaryTask, primaryRoute, posts, time
               <p className="mt-5 max-w-xl text-sm leading-7 text-white/78">{getExcerpt(feature, 180)}</p>
             </div>
           </Link>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 lg:content-start">
             {indexPosts.map((post, index) => <IndexPill key={post.id} post={post} href={postHref(primaryTask, post, primaryRoute)} index={index} />)}
           </div>
         </div>
@@ -265,7 +308,7 @@ export function EditableHomeCta() {
       <div className="pointer-events-none absolute inset-0 opacity-40"><div className="absolute left-[10%] top-[20%] h-64 w-64 rounded-full bg-[#f4d7c1] blur-3xl" /></div>
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Where useful pages meet audience</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Once you're signed in</h2>
           <p className={`mt-4 text-lg ${pal.mutedText}`}>Explore useful posts, fresh updates, and curated resources across every section of the site.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4"><Link href="/contact" className={dc.button.primary}>Contact us</Link></div>
         </div>

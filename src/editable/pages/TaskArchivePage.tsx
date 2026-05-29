@@ -1,15 +1,15 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { ArrowRight, Bookmark, BriefcaseBusiness, Building2, Camera, Download, FileText, Filter, Image as ImageIcon, MapPin, Megaphone, Search, UserRound } from 'lucide-react'
+import { ArrowRight, Bookmark, BriefcaseBusiness, Building2, Camera, CheckCircle2, Download, FileText, Filter, Image as ImageIcon, MapPin, Megaphone, PenLine, Search, UserRound } from 'lucide-react'
 import { buildTaskMetadata } from '@/lib/seo'
 import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 import { fetchPaginatedTaskPosts, buildPostUrl } from '@/lib/task-data'
-import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
+import { getTaskConfig, type TaskKey } from '@/lib/site-config'
 import type { SiteFeedPagination, SitePost } from '@/lib/site-connector'
 import { taskPageMetadata } from '@/config/site.content'
 import { taskPageVoices } from '@/editable/content/task-pages.content'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
-import { getVisualPreset, visualSystem } from '@/editable/theme/visual-system'
+import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
 export const revalidate = 3
 
@@ -84,41 +84,55 @@ export async function EditableTaskArchiveRoute({
 export function TaskArchiveView({ task, posts, pagination, category, basePath }: { task: TaskKey; posts: SitePost[]; pagination: SiteFeedPagination; category: string; basePath: string }) {
   const taskConfig = getTaskConfig(task)
   const voice = taskPageVoices[task]
-  const preset = getVisualPreset(visualSystem.recommendedPreset as any)
   const page = pagination.page || 1
   const label = taskConfig?.label || task
   const deck = taskDeck[task]
   const Icon = deck.icon
-  const archiveVars = { '--archive-bg': preset.colors.background, '--archive-text': preset.colors.foreground, '--archive-surface': preset.colors.surface, '--archive-accent': preset.colors.accent } as CSSProperties
+  const archiveVars = { '--archive-bg': '#fff8ee', '--archive-text': '#24150f', '--archive-surface': '#fffdf8', '--archive-accent': '#f1763d' } as CSSProperties
   const categoryLabel = category === 'all' ? 'All categories' : CATEGORY_OPTIONS.find((item) => item.slug === category)?.name || category
 
   return (
     <EditableSiteShell>
       <main style={archiveVars} className="bg-[var(--archive-bg)] text-[var(--archive-text)]">
-        <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
-          <div className="rounded-[2.5rem] border border-[var(--editable-border)] bg-[var(--archive-surface)] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white/70 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-[var(--archive-accent)]"><Icon className="h-4 w-4" /> {label}</div>
-            <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.07em] sm:text-6xl">{voice?.headline || `Browse ${label}`}</h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 opacity-70">{voice?.description || SITE_CONFIG.description}</p>
-            <div className="mt-6 rounded-[1.5rem] border border-[var(--editable-border)] bg-white/55 p-4 text-sm font-bold leading-7 opacity-75">{deck.promise}</div>
+        <section className="mx-auto grid max-w-[1280px] gap-6 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_450px] lg:items-start lg:px-8 lg:py-16">
+          <div className="rounded-[1.25rem] border border-[#ead9c6] bg-[var(--archive-surface)] p-7 shadow-[0_24px_80px_rgba(49,30,19,0.10)] sm:p-10">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#ead9c6] bg-[#fff8ee] px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-[var(--archive-accent)]"><Icon className="h-4 w-4" /> Article archive</div>
+            <h1 className="mt-5 max-w-4xl text-5xl font-black leading-tight tracking-normal [font-family:Georgia,serif] sm:text-6xl">{voice?.headline || `Browse ${label}`}</h1>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-[#6d5648]">{voice?.description || `Read the newest articles on ${slot4BrandConfig.siteName}.`}</p>
+            <div className="mt-6 rounded-[1.25rem] border border-[#ead9c6] bg-[#fff8ee] p-4 text-sm font-bold leading-7 text-[#6d5648]">{deck.promise}</div>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href={basePath} className="rounded-full bg-[var(--archive-text)] px-5 py-3 text-sm font-black text-[var(--archive-bg)]">Browse all</Link>
               <Link href="/search" className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Search posts</Link>
             </div>
           </div>
 
-          <form action={basePath} className="self-end rounded-[2rem] border border-[var(--editable-border)] bg-white/70 p-5 shadow-sm backdrop-blur">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] opacity-55"><Filter className="h-4 w-4" /> Filter</div>
-            <select name="category" defaultValue={category} className="mt-4 h-12 w-full rounded-2xl border border-[var(--editable-border)] bg-white px-4 text-sm font-bold outline-none">
-              <option value="all">All categories</option>
-              {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
-            </select>
-            <button className="mt-3 h-12 w-full rounded-2xl bg-[var(--archive-text)] text-sm font-black text-[var(--archive-bg)]">Apply</button>
-            <p className="mt-3 text-xs font-bold opacity-55">Showing: {categoryLabel}</p>
-          </form>
+          <aside className="grid h-full gap-4">
+            <form action={basePath} className="rounded-[1.25rem] border border-[#ead9c6] bg-white/80 p-5 shadow-sm backdrop-blur">
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] opacity-55"><Filter className="h-4 w-4" /> Filter</div>
+              <select name="category" defaultValue={category} className="mt-4 h-12 w-full rounded-2xl border border-[var(--editable-border)] bg-white px-4 text-sm font-bold outline-none">
+                <option value="all">All categories</option>
+                {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
+              </select>
+              <button className="mt-3 h-12 w-full rounded-2xl bg-[var(--archive-text)] text-sm font-black text-[var(--archive-bg)]">Apply</button>
+              <p className="mt-3 text-xs font-bold opacity-55">Showing: {categoryLabel}</p>
+            </form>
+            <div className="rounded-[1.25rem] border border-[#ead9c6] bg-[#20120c] p-5 text-[#fff3df] shadow-[0_24px_70px_rgba(49,30,19,0.14)]">
+              <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-[#f6c996]"><PenLine className="h-4 w-4" /> Editorial desk</p>
+              <h2 className="mt-4 text-3xl font-black leading-tight tracking-normal [font-family:Georgia,serif]">Find sharper reads without the empty scroll.</h2>
+              <p className="mt-3 text-sm leading-7 text-white/68">Browse essays, guides, explainers, and story-led posts with context before the grid begins.</p>
+            </div>
+            <div className="rounded-[1.25rem] border border-[#ead9c6] bg-[#fffdf8] p-5 shadow-sm">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f1763d]">Archive signals</p>
+              <div className="mt-4 grid gap-3 text-sm font-bold text-[#6d5648]">
+                {['Topic filters stay visible', 'Cards begin closer to the hero', 'Article summaries remain readable'].map((item) => (
+                  <p key={item} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#f1763d]" /> {item}</p>
+                ))}
+              </div>
+            </div>
+          </aside>
         </section>
 
-        <section className="mx-auto max-w-[var(--editable-container)] px-4 pb-16 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-[1280px] px-4 pb-16 sm:px-6 lg:px-8">
           {posts.length ? (
             <div className={deck.archiveClass}>
               {posts.map((post, index) => <ArchivePostCard key={post.id || post.slug} post={post} task={task} basePath={basePath} index={index} />)}
@@ -157,15 +171,15 @@ function ArticleArchiveCard({ post, href, index }: { post: SitePost; href: strin
   const image = getImage(post)
   const category = getCategory(post, 'Article')
   return (
-    <Link href={href} className="group overflow-hidden rounded-[2rem] border border-[var(--editable-border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+    <Link href={href} className="group overflow-hidden rounded-[1.25rem] border border-[#ead9c6] bg-[#fffdf8] shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[4/3] overflow-hidden bg-black/5">
         <img src={image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
         <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em]">{category}</span>
       </div>
       <div className="p-5">
         <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[var(--archive-accent)]">Story {String(index + 1).padStart(2, '0')}</p>
-        <h2 className="mt-2 text-xl font-black leading-tight tracking-[-0.04em]">{post.title}</h2>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 opacity-65">{getSummary(post)}</p>
+        <h2 className="mt-2 text-2xl font-black leading-tight tracking-normal [font-family:Georgia,serif]">{post.title}</h2>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#6d5648]">{getSummary(post)}</p>
       </div>
     </Link>
   )
