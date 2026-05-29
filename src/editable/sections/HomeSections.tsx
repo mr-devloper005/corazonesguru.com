@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Heart, Search } from 'lucide-react'
+import { ArrowRight, Search } from 'lucide-react'
 import type { SitePost } from '@/lib/site-connector'
 import type { HomeTimeSection } from '@/lib/task-data'
 import type { TaskKey } from '@/lib/site-config'
@@ -7,7 +7,6 @@ import { SITE_CONFIG } from '@/lib/site-config'
 import { pagesContent } from '@/editable/content/pages.content'
 import { editableDesignContract as dc, editablePalette as pal } from '@/editable/layouts/design-contract'
 import { getEditablePostImage, postHref } from '@/editable/cards/PostCards'
-import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
 type HomeSectionProps = {
   primaryTask: TaskKey
@@ -128,7 +127,7 @@ function Rail({ children, className = '' }: { children: React.ReactNode; classNa
   return <div className={`${dc.layout.rail} ${className}`}>{children}</div>
 }
 
-export function EditableHomeHero({ primaryTask, primaryRoute }: HomeSectionProps) {
+export function EditableHomeHero({ primaryTask }: HomeSectionProps) {
   const heroTitle = pagesContent.home.hero.title.join(' ') || `Come for the ${taskLabel(primaryTask).toLowerCase()}. Stay for the connection.`
   const heroStats = [
     { value: '500K+', label: 'writers' },

@@ -6,11 +6,9 @@ import { usePathname } from 'next/navigation'
 import { Menu, Search, UserPlus, LogIn, X } from 'lucide-react'
 import { globalContent } from '@/editable/content/global.content'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
-import { getVisualPreset, visualSystem } from '@/editable/theme/visual-system'
 import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
 export function EditableNavbar() {
-  const preset = getVisualPreset(visualSystem.recommendedPreset as any)
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const { session, logout } = useEditableLocalAuthSession()
