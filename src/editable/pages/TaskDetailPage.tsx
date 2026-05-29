@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Tag, UserRound } from 'lucide-react'
+import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Rss, Tag, UserRound } from 'lucide-react'
 import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
 import { buildPostUrl, fetchArticleComments, fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
-import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
+import { getTaskConfig, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
-import { getVisualPreset, visualSystem } from '@/editable/theme/visual-system'
+import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
 export const revalidate = 3
 
@@ -61,6 +61,27 @@ const formatPlainText = (raw: string) => {
 
 const summaryText = (post: SitePost) => post.summary || asText(getContent(post).description) || asText(getContent(post).excerpt) || ''
 const categoryOf = (post: SitePost, fallback: string) => asText(getContent(post).category) || post.tags?.[0] || fallback
+const authorOf = (post: SitePost) => {
+  const content = getContent(post)
+  return asText(content.author) || asText(content.authorName) || asText(content.name) || 'Editorial Desk'
+}
+const readingTimeFor = (post: SitePost) => {
+  const text = `${post.title} ${summaryText(post)} ${getBody(post)}`.replace(/<[^>]*>/g, ' ')
+  const words = text.trim().split(/\s+/).filter(Boolean).length
+  return Math.max(2, Math.ceil(words / 220))
+}
+const takeawaysFor = (post: SitePost) => {
+  const content = getContent(post)
+  const direct = content.takeaways || content.keyTakeaways || content.highlights
+  if (Array.isArray(direct)) return direct.map((item) => String(item).trim()).filter(Boolean).slice(0, 4)
+  const summary = summaryText(post)
+  const category = categoryOf(post, 'Article')
+  return [
+    summary || `${post.title} gives readers a clear path into the latest ${category.toLowerCase()} conversation.`,
+    'The piece is organized for quick context first, then deeper reading without losing the thread.',
+    'Readers can continue into related articles and editorial notes from the same page.',
+  ].slice(0, 3)
+}
 const mapSrcFor = (post: SitePost) => {
   const address = getField(post, ['address', 'location', 'city'])
   const lat = getField(post, ['lat', 'latitude'])
@@ -71,8 +92,7 @@ const mapSrcFor = (post: SitePost) => {
 }
 
 export function TaskDetailView({ task, post, related, comments = [] }: { task: TaskKey; post: SitePost; related: SitePost[]; comments?: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
-  const preset = getVisualPreset(visualSystem.recommendedPreset as any)
-  const detailVars = { '--detail-bg': preset.colors.background, '--detail-text': preset.colors.foreground, '--detail-surface': preset.colors.surface, '--detail-accent': preset.colors.accent } as CSSProperties
+  const detailVars = { '--detail-bg': '#fff8ee', '--detail-text': '#24150f', '--detail-surface': '#fffdf8', '--detail-accent': '#f1763d' } as CSSProperties
 
   return (
     <EditableSiteShell>
@@ -100,18 +120,40 @@ function BackLink({ task }: { task: TaskKey }) {
 
 function ArticleDetail({ post, related, comments }: { post: SitePost; related: SitePost[]; comments: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
   const images = getImages(post)
+  const author = authorOf(post)
+  const readTime = readingTimeFor(post)
+  const takeaways = takeawaysFor(post)
   return (
-    <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_350px] lg:px-8 lg:py-16">
-      <article className="min-w-0 rounded-[2.7rem] border border-[var(--editable-border)] bg-[var(--detail-surface)] p-5 shadow-[0_30px_90px_rgba(15,23,42,0.09)] sm:p-8 lg:p-12">
-        <BackLink task="article" />
-        <p className="mt-8 text-xs font-black uppercase tracking-[0.28em] text-[var(--detail-accent)]">{categoryOf(post, 'Article')}</p>
-        <h1 className="mt-4 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-5xl lg:text-7xl">{post.title}</h1>
-        {images[0] ? <img src={images[0]} alt="" className="mt-8 max-h-[620px] w-full rounded-[2rem] object-cover" /> : null}
-        <BodyContent post={post} />
-        <EditableComments slug={post.slug} comments={comments} />
-      </article>
-      <RelatedPanel task="article" post={post} related={related} />
-    </section>
+    <div className="bg-[#fffdf8] text-[#101820]">
+      <section className="mx-auto grid max-w-[1040px] gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,680px)_274px] lg:px-8 lg:py-12">
+        <article className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-[#6f35c8]">
+            <Link href="/" className="hover:underline">Home</Link><span>/</span><Link href="/article" className="hover:underline">Articles</Link><span>/</span><span>{categoryOf(post, 'Article')}</span>
+          </div>
+          <h1 className="mt-4 max-w-3xl text-4xl font-black leading-[0.95] tracking-normal text-black sm:text-5xl lg:text-[3.45rem] [font-family:Arial_Narrow,Arial,sans-serif]">{post.title}</h1>
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-b border-[#d7d7d7] pb-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#20120c] text-sm font-black text-[#fff3df]">{author.slice(0, 1).toUpperCase()}</div>
+              <div className="min-w-0 text-sm">
+                <p className="truncate font-black text-[#263240] [text-decoration:underline_dotted]">{author}</p>
+                <p className="mt-0.5 text-xs font-medium text-[#75808a]">{readTime} min read</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-[#a5a5a5]" aria-label="Share this article">{['X', 'R', 'F', 'G'].map((item) => <span key={item} className="flex h-5 w-5 items-center justify-center text-sm font-black">{item}</span>)}</div>
+          </div>
+          {images[0] ? <figure className="mt-5"><img src={images[0]} alt="" className="max-h-[560px] w-full object-cover" /><figcaption className="mt-2 text-[11px] font-medium text-[#8a95a0]">Image: {categoryOf(post, 'Article')}</figcaption></figure> : null}
+          <section className="mt-8 bg-[#f5f5f5] p-5">
+            <h2 className="mb-3 inline-block bg-[#25303a] px-1.5 py-0.5 text-[10px] font-black uppercase tracking-normal text-white [font-family:Arial_Narrow,Arial,sans-serif]">Key takeaways</h2>
+            <ul className="ml-4 list-disc space-y-2 text-base leading-7 marker:text-[#7e2fd3]">{takeaways.map((item) => <li key={item}>{item}</li>)}</ul>
+          </section>
+          <BodyContent post={post} articleStyle />
+          {related.length ? <section className="mt-10 border-t border-[#d7d7d7] pt-5"><h2 className="text-xl font-black uppercase tracking-normal text-[#111] [font-family:Arial_Narrow,Arial,sans-serif]">You might also like_</h2><div className="mt-4 grid gap-2">{related.slice(0, 4).map((item) => <Link key={item.id || item.slug} href={buildPostUrl('article', item.slug)} className="text-sm leading-6 text-[#182534] hover:text-[#7e2fd3]">- {item.title}</Link>)}</div></section> : null}
+          <section className="mt-8 bg-[#def8ef] p-5"><h2 className="text-lg font-black uppercase tracking-normal text-[#1e2a34] [font-family:Arial_Narrow,Arial,sans-serif]">Our editorial process</h2><p className="mt-3 text-sm leading-7 text-[#52616e]">At {slot4BrandConfig.siteName}, every article layout is designed to keep the claim, context, and next read easy to find. Editors shape headlines, summaries, and related links so readers can move through the archive with confidence.</p></section>
+          <EditableComments slug={post.slug} comments={comments} />
+        </article>
+        <ArticleSidebar related={related} />
+      </section>
+    </div>
   )
 }
 
@@ -124,7 +166,7 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
   const website = getField(post, ['website', 'url'])
   const mapSrc = mapSrcFor(post)
   return (
-    <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+    <section className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
       <BackLink task="listing" />
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
         <article className="rounded-[2.8rem] border border-[var(--editable-border)] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.09)] sm:p-9">
@@ -161,7 +203,7 @@ function ClassifiedDetail({ post, related }: { post: SitePost; related: SitePost
   const email = getField(post, ['email'])
   const website = getField(post, ['website', 'url'])
   return (
-    <section className="mx-auto grid max-w-[var(--editable-container)] gap-7 px-4 py-10 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8 lg:py-16">
+    <section className="mx-auto grid max-w-[1120px] gap-7 px-4 py-10 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8 lg:py-16">
       <aside className="rounded-[2.5rem] border border-[var(--editable-border)] bg-[var(--detail-text)] p-7 text-[var(--detail-bg)] shadow-xl lg:sticky lg:top-24 lg:self-start">
         <BackLink task="classified" />
         <p className="mt-10 text-xs font-black uppercase tracking-[0.28em] opacity-60">Classified notice</p>
@@ -189,7 +231,7 @@ function ClassifiedDetail({ post, related }: { post: SitePost; related: SitePost
 function ImageDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
   const images = getImages(post)
   return (
-    <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+    <section className="mx-auto max-w-[1120px] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
       <BackLink task="image" />
       <div className="mt-8 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
         <aside className="rounded-[2.5rem] border border-[var(--editable-border)] bg-white p-7 lg:sticky lg:top-24 lg:self-start">
@@ -215,7 +257,7 @@ function ImageDetail({ post, related }: { post: SitePost; related: SitePost[] })
 function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
   const website = getField(post, ['website', 'url', 'link'])
   return (
-    <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8 lg:py-16">
+    <section className="mx-auto grid max-w-[1120px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8 lg:py-16">
       <article className="rounded-[2.7rem] border border-[var(--editable-border)] bg-white p-7 shadow-[0_30px_90px_rgba(15,23,42,0.08)] sm:p-10">
         <BackLink task="sbm" />
         <div className="mt-10 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-[var(--detail-text)] text-[var(--detail-bg)]"><Bookmark className="h-9 w-9" /></div>
@@ -232,7 +274,7 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
 function PdfDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
   const fileUrl = getField(post, ['fileUrl', 'pdfUrl', 'documentUrl', 'url'])
   return (
-    <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8 lg:py-16">
+    <section className="mx-auto grid max-w-[1120px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8 lg:py-16">
       <article className="rounded-[2.7rem] border border-[var(--editable-border)] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.08)] sm:p-9">
         <BackLink task="pdf" />
         <div className="mt-8 grid gap-6 sm:grid-cols-[120px_1fr]">
@@ -264,7 +306,7 @@ function ProfileDetail({ post, related }: { post: SitePost; related: SitePost[] 
   const website = getField(post, ['website', 'url'])
   const email = getField(post, ['email'])
   return (
-    <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[420px_minmax(0,1fr)] lg:px-8 lg:py-16">
+    <section className="mx-auto grid max-w-[1120px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[420px_minmax(0,1fr)] lg:px-8 lg:py-16">
       <aside className="rounded-[2.7rem] border border-[var(--editable-border)] bg-white p-8 text-center shadow-[0_30px_90px_rgba(15,23,42,0.08)] lg:sticky lg:top-24 lg:self-start">
         <BackLink task="profile" />
         <div className="mx-auto mt-10 flex h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-[var(--detail-bg)] ring-1 ring-[var(--editable-border)]">
@@ -283,7 +325,28 @@ function ProfileDetail({ post, related }: { post: SitePost; related: SitePost[] 
   )
 }
 
-function BodyContent({ post, compact = false }: { post: SitePost; compact?: boolean }) {
+function ArticleSidebar({ related }: { related: SitePost[] }) {
+  return (
+    <aside className="min-w-0 space-y-9 lg:sticky lg:top-24 lg:self-start">
+      <section className="border border-[#d2d2d2] bg-white">
+        <div className="flex h-4 items-center justify-end gap-1 border-b border-[#c7d9d1] bg-[#e1fbf1] px-2"><span className="h-1.5 w-1.5 bg-[#52616e]" /><span className="h-1.5 w-1.5 bg-[#52616e]" /><span className="h-1.5 w-1.5 bg-[#52616e]" /></div>
+        <div className="p-5">
+          <h2 className="text-center text-xl font-black uppercase tracking-normal [font-family:Arial_Narrow,Arial,sans-serif]">Join over 100K readers</h2>
+          <p className="mt-4 text-sm leading-7 text-[#586777]">Join readers discovering sharp essays, practical guides, and article updates that actually matter.</p>
+          <form action="/signup" className="mt-4 flex overflow-hidden rounded-md border border-[#1c1c1c]"><input name="email" type="email" placeholder="Enter your email" className="min-w-0 flex-1 px-3 py-3 text-sm outline-none" /><button className="bg-black px-4 text-sm font-black text-white">Subscribe</button></form>
+        </div>
+      </section>
+      {related.length ? <section><h2 className="text-xl font-black uppercase tracking-normal [font-family:Arial_Narrow,Arial,sans-serif]">Latest lists_</h2><div className="mt-4 grid gap-3">{related.slice(0, 3).map((item) => { const image = getImages(item)[0]; return <Link key={item.id || item.slug} href={buildPostUrl('article', item.slug)} className="grid grid-cols-[1fr_96px] border border-[#d2d2d2] bg-white"><div className="min-w-0 p-3"><h3 className="line-clamp-3 text-sm font-bold leading-5 text-[#1c2a36]">{item.title}</h3><p className="mt-2 text-[10px] font-black uppercase tracking-[0.14em] text-[#7b8791]">Article</p></div>{image ? <img src={image} alt="" className="h-full min-h-24 w-24 object-cover" /> : <div className="flex min-h-24 w-24 items-center justify-center bg-[#f5f5f5]"><FileText className="h-6 w-6 text-[#9aa3aa]" /></div>}</Link> })}</div></section> : null}
+      <section className="border border-[#d2d2d2] bg-white">
+        <div className="flex h-4 items-center justify-end gap-1 border-b border-[#c7d9d1] bg-[#e1fbf1] px-2"><span className="h-1.5 w-1.5 bg-[#52616e]" /><span className="h-1.5 w-1.5 bg-[#52616e]" /><span className="h-1.5 w-1.5 bg-[#52616e]" /></div>
+        <div className="p-5"><h2 className="flex items-center gap-2 text-lg font-black uppercase tracking-normal [font-family:Arial_Narrow,Arial,sans-serif]"><Rss className="h-4 w-4" /> Why trust {slot4BrandConfig.siteName}</h2><p className="mt-4 text-sm leading-7 text-[#586777]">Our article pages are built for human-readable context, transparent related links, and concise summaries before deep reading.</p><Link href="/about" className="mt-4 inline-flex text-sm font-bold text-[#7e2fd3] underline underline-offset-4">Learn about our process</Link></div>
+      </section>
+    </aside>
+  )
+}
+
+function BodyContent({ post, compact = false, articleStyle = false }: { post: SitePost; compact?: boolean; articleStyle?: boolean }) {
+  if (articleStyle) return <div className="article-content article-content--reference mt-8 max-w-none text-base leading-8 text-[#182534]" dangerouslySetInnerHTML={{ __html: formatPlainText(getBody(post)) }} />
   return <div className={`article-content mt-8 max-w-none ${compact ? 'text-base leading-8' : 'text-lg leading-9'} opacity-80`} dangerouslySetInnerHTML={{ __html: formatPlainText(getBody(post)) }} />
 }
 
@@ -341,7 +404,7 @@ function BadgeLine({ label, value }: { label: string; value: string }) {
   return <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm"><span className="font-black uppercase tracking-[0.16em] opacity-60">{label}</span><span className="font-black">{value}</span></div>
 }
 
-function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean }) {
+function RelatedPanel({ task, post: _post, related, compact = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean }) {
   const taskConfig = getTaskConfig(task)
   return (
     <aside className="min-w-0 space-y-5">
@@ -350,8 +413,7 @@ function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey;
           <p className="text-xs font-black uppercase tracking-[0.22em] opacity-55">About this post</p>
           <div className="mt-4 grid gap-3 text-sm font-bold opacity-75">
             <p className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Task: {taskConfig?.label || task}</p>
-            <p className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Site: {SITE_CONFIG.name}</p>
-            {post.publishedAt ? <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p> : null}
+            <p className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Site: {slot4BrandConfig.siteName}</p>
           </div>
         </div>
       ) : null}
