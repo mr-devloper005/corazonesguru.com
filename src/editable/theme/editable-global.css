@@ -42,3 +42,46 @@ body {
 .article-content a {
   color: var(--slot4-accent-fill);
 }
+
+.article-content--reference p {
+  margin: 1.15rem 0;
+}
+
+.article-content--reference h2,
+.article-content--reference h3 {
+  margin: 2rem 0 0.75rem;
+  color: #000;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.article-content--reference h2 {
+  font-size: clamp(1.55rem, 3vw, 2rem);
+}
+
+.article-content--reference h3 {
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+}
+
+.article-content--reference a {
+  color: #7e2fd3;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.article-content--reference strong,
+.article-content--reference b {
+  color: #111;
+  font-weight: 900;
+}
+
+.article-content--reference ul,
+.article-content--reference ol {
+  margin: 1rem 0 1.25rem 1.5rem;
+}
+
+.article-content--reference li {
+  margin: 0.35rem 0;
+}
