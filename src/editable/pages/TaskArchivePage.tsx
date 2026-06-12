@@ -116,13 +116,11 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
               <button className="mt-3 h-12 w-full rounded-2xl bg-[var(--archive-text)] text-sm font-black text-[var(--archive-bg)]">Apply</button>
               <p className="mt-3 text-xs font-bold opacity-55">Showing: {categoryLabel}</p>
             </form>
-
             <div className="rounded-[1.25rem] border border-[#ead9c6] bg-[#20120c] p-5 text-[#fff3df] shadow-[0_24px_70px_rgba(49,30,19,0.14)]">
               <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-[#f6c996]"><PenLine className="h-4 w-4" /> Editorial desk</p>
               <h2 className="mt-4 text-3xl font-black leading-tight tracking-normal [font-family:Georgia,serif]">Find sharper reads without the empty scroll.</h2>
               <p className="mt-3 text-sm leading-7 text-white/68">Browse essays, guides, explainers, and story-led posts with context before the grid begins.</p>
             </div>
-
             <div className="rounded-[1.25rem] border border-[#ead9c6] bg-[#fffdf8] p-5 shadow-sm">
               <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f1763d]">Archive signals</p>
               <div className="mt-4 grid gap-3 text-sm font-bold text-[#6d5648]">
