@@ -18,13 +18,13 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <section className={cn('rounded-[2rem] border border-current/10 bg-current/[0.03] p-8 text-center', className)}>
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-current/10">
-        <SearchX className="h-6 w-6" />
+    <section className={cn('rounded-xl border border-white/[0.06] bg-white/[0.02] p-8 text-center', className)}>
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-[#ff3d8b]/10">
+        <SearchX className="h-6 w-6 text-[#ff3d8b]" />
       </div>
-      <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em]">{title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-current/65">{description}</p>
-      <Link href={actionHref} className="mt-6 inline-flex items-center gap-2 rounded-full border border-current/15 px-5 py-3 text-sm font-semibold transition hover:bg-current hover:text-background">
+      <h2 className="mt-5 text-2xl font-semibold tracking-[-0.02em] text-white/90">{title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-white/40">{description}</p>
+      <Link href={actionHref} className="mt-6 inline-flex items-center gap-2 rounded-sm border border-white/[0.1] px-5 py-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-white/70 transition hover:bg-white/[0.04]">
         {actionLabel}
         <ArrowRight className="h-4 w-4" />
       </Link>

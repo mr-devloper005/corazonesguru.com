@@ -1,38 +1,34 @@
 /*
-  Editable global theme layer.
-
-  Safe for UI editors / AI tools:
-  - Full site background
-  - Global text color
-  - Selection color
-  - Scrollbar feel
-  - Article body typography accents
-
-  Do not add data fetching, scripts, or route logic here.
+  Editable global theme layer — Cerebrium dark premium.
 */
 
 body {
   background-color: var(--slot4-page-bg) !important;
   color: var(--slot4-page-text) !important;
   background-image: var(--slot4-body-gradient) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--slot4-accent-fill) 22%, transparent);
-  color: var(--slot4-page-text);
+  background: color-mix(in oklab, var(--slot4-accent-fill) 30%, transparent);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: color-mix(in oklab, var(--slot4-page-bg) 88%, white);
+  background: #0a0a0a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--slot4-accent) 40%, transparent);
+  background: rgba(255, 61, 139, 0.25);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in oklab, var(--slot4-accent) 62%, transparent);
+  background: rgba(255, 61, 139, 0.45);
 }
 
 .article-content h2 {
@@ -50,11 +46,10 @@ body {
 .article-content--reference h2,
 .article-content--reference h3 {
   margin: 2rem 0 0.75rem;
-  color: #000;
-  font-family: "Arial Narrow", Arial, sans-serif;
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 1.05;
+  color: #f0f0f0;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .article-content--reference h2 {
@@ -66,15 +61,15 @@ body {
 }
 
 .article-content--reference a {
-  color: #7e2fd3;
+  color: #ff3d8b;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .article-content--reference strong,
 .article-content--reference b {
-  color: #111;
-  font-weight: 900;
+  color: #fff;
+  font-weight: 700;
 }
 
 .article-content--reference ul,
